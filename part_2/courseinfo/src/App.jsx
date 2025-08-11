@@ -1,69 +1,77 @@
-// const TotalExercises = ({course}) => {
-//   let total = 0
-//   course.parts.forEach(part =>{
-//     total += part.exercises
-//   })
-//   return <p><b>total of {total} exercises</b></p>
-// }
-const initialValue = 0
-const total = course.parts.reduce((s,p) => {
-  return s + p.exercises 
-}, initialValue)
-
-const TotalExercises = ({course}) => {
-  const total = course.parts.reduce((s,p) => s + p.exercises, initialValue);
-  return <p><b>Total of {total} exercises</b></p>
-}
+import {Course} from './components/comps.jsx'
 
 
-const Course = ({course}) =>{
-  return (
-    <>
-      <h1>{course.name}</h1>
-      {course.parts.map(part => (
-        <p key={part.id}>{part.name}: {part.exercises}</p>
-      ))}
-    </>
-  )
+// const initialValue = 0 // Se puede usar esta constante o directamente puedes sustituir intialValue por 0 en reduce
 
-}
 
 
 const App = () => {
 
-  const course = {
-    id: 1,
-    name: "Half Stack application development",
-    parts: [
-      {
-        name: "Fundamentals of React",
-        exercises: 10,
-        id:1
-      },
-      {
-        name: "Using props to pass data",
-        exercises: 7,
-        id: 2
-      },
-      {
-        name: "State of a component",
-        exercises: 14,
-        id: 3
-      },
-      {
-        name: "Redux",
-        exercises: 11,
-        id: 4
-      }
-    ]
-  }
+  const courses = [
+    {
+      id: 1,
+      name: "Half Stack application development",
+      parts: [
+        {
+          name: "Fundamentals of React",
+          exercises: 10,
+          id:1
+        },
+        {
+          name: "Using props to pass data",
+          exercises: 7,
+          id: 2
+        },
+        {
+          name: "State of a component",
+          exercises: 14,
+          id: 3
+        },
+        {
+          name: "Redux",
+          exercises: 11,
+          id: 4
+        }
+      ]
+    },
+    {
+      name: "Node.js",
+      id: 2,
+      parts: [
+        {
+          name: "Routing",
+          exercises: 3,
+          id: 1
+        },
+        {
+          name: "Middlewares",
+          exercises: 7,
+          id: 2
+        }
+      ]
+    }
+  ]
+
+
+  // FORMA MANUAL DE HACERLO PERO NO OPTIMA YA QUE HAY QUE METER A MANO TODOS LOS ARRAYS
+  // return(
+  //   <>
+  //   <h1>Web development curriculum</h1>
+  //    <Course course={course[0]} />
+  //    <TotalExercises course={course[0]} />
+  //    <Course course={course[1]} />
+  //    <TotalExercises course={course[1]} />
+  //    </>
+  //   )
 
   return(
     <>
-     <Course course={course} />
-     <TotalExercises course={course} />
-     </>
-    )
+    <h1>Web Development Curriculum</h1>
+    {courses.map(course =>
+      <Course key={course.id} course={course} />
+    )}
+    </>
+  )
 }
 
 export default App
