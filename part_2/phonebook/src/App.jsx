@@ -1,24 +1,82 @@
 import { useState } from "react";
+import { handleNameChange, handlePhoneChange, searchPerson} from './components/phonebook'
+
+
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas"}
+    { name: "Arto Hellas",
+      phoneNumber: "123456789",
+      id: crypto.randomUUID()
+    },
+    { name: 'Ada Lovelace', phoneNumber: '39-44-5323523', id: crypto.randomUUID() },
+    { name: 'Dan Abramov', phoneNumber: '12-43-234345', id: crypto.randomUUID() },
+    { name: 'Mary Poppendieck', phoneNumber: '39-23-6423122', id: crypto.randomUUID()}
   ])
   const [newName, setNewName] = useState("")
+  const [newPhoneNumber, setNewPhoneNumber] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
+
+  const addUser = (event) => {
+    event.preventDefault()
+    if(newName.trim() === ""){
+      return
+    }
+    if(persons.find(person => person.name === newName)){
+      return alert(`The name: ${newName} is already in the phonebook`)
+    }
+
+  const nameObject = {
+      name: newName,
+      phoneNumber: newPhoneNumber,
+      id: crypto.randomUUID()
+    }
+    setPersons(persons.concat(nameObject))
+    setNewName("")
+    setNewPhoneNumber("")
+  }
+
+
+  const personsToShow = searchTerm === "" ? persons 
+  : persons.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
+
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
+      <div>
+        filter shown with:
+        {/* Si la funcion se queda dentro de APP se haria como aqui */}
+        {/* <input type="search" onChange={searchPerson}/> */}
+        {/* Al sacar la funcion de App hay que manejarlo de esta manera */}
+        <input value={searchTerm} onChange={(e) => searchPerson(e, setSearchTerm)} />
+      </div>
+      <h2>Add new</h2>
+      <form onSubmit={addUser}>
         <div>
-          name: <input />
+          {/* Si la funcion se queda dentro de APP se haria como aqui */}
+          {/* name: <input value={newName} onChange={handleNameChange} required/> */} 
+          {/* Al sacar la funcion de App hay que manejarlo de esta manera */}
+          name: <input value={newName} onChange={(e) => handleNameChange(e, setNewName)} />
         </div>
-        <div> debug: {newName}</div>
+        <div>
+          {/* Si la funcion se queda dentro de APP se haria como aqui */}
+          {/* number: <input value={newPhoneNumber} onChange={handlePhoneChange} required/> */}
+          {/* Al sacar la funcion de App hay que manejarlo de esta manera */}
+          number: <input value={newPhoneNumber} onChange={(e) => handlePhoneChange(e, setNewPhoneNumber)} />
+        </div>
         <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
+        <ul>
+          {personsToShow.map((person) => (
+            <li key={person.id}>
+              <div>{person.name}:  {person.phoneNumber}</div>
+            </li>
+          ))}
+        </ul>
     </div>
   )
 }
