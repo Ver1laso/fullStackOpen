@@ -1,21 +1,28 @@
-import { useState } from "react";
-import { handleNameChange, handlePhoneChange, searchPerson} from './components/phonebook'
+import { useState, useEffect } from "react";
+import axios from 'axios'
+import { handleNameChange, handlePhoneChange, searchPerson} from './components/phonebook';
+
 
 
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas",
-      phoneNumber: "123456789",
-      id: crypto.randomUUID()
-    },
-    { name: 'Ada Lovelace', phoneNumber: '39-44-5323523', id: crypto.randomUUID() },
-    { name: 'Dan Abramov', phoneNumber: '12-43-234345', id: crypto.randomUUID() },
-    { name: 'Mary Poppendieck', phoneNumber: '39-23-6423122', id: crypto.randomUUID()}
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
   const [newPhoneNumber, setNewPhoneNumber] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
+
+
+  const hook = () => {
+    axios
+      .get("http://localhost:3001/persons")
+      .then(response => {
+        console.log("Respuesta obtenida")
+        setPersons(response.data)
+      })
+  }
+
+  useEffect(hook,[])
+
 
   const addUser = (event) => {
     event.preventDefault()
@@ -28,8 +35,8 @@ const App = () => {
 
   const nameObject = {
       name: newName,
-      phoneNumber: newPhoneNumber,
-      id: crypto.randomUUID()
+      number: newPhoneNumber,
+      id: String(persons.length + 1)
     }
     setPersons(persons.concat(nameObject))
     setNewName("")
@@ -73,7 +80,7 @@ const App = () => {
         <ul>
           {personsToShow.map((person) => (
             <li key={person.id}>
-              <div>{person.name}:  {person.phoneNumber}</div>
+              <div>{person.name}:  {person.number}</div>
             </li>
           ))}
         </ul>
