@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from 'axios'
 import { handleNameChange, handlePhoneChange, searchPerson} from './components/phonebook';
-
+import phonebookServices from "./services/phonebookServices";
+import './index.css'
 
 
 
@@ -10,19 +11,24 @@ const App = () => {
   const [newName, setNewName] = useState("")
   const [newPhoneNumber, setNewPhoneNumber] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
+  const [errorMessage, setErrorMessage] = useState("some error happened...")
+  const [message, setMessage] = useState(null)
 
 
   const hook = () => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-        console.log("Respuesta obtenida")
-        setPersons(response.data)
+    // axios
+      // .get("http://localhost:3001/persons")
+      // .then(response => {
+      //   console.log("Respuesta obtenida")
+      //   setPersons(response.data)
+      phonebookServices
+      .getAll()
+      .then(initialNames => {
+        setPersons(initialNames)
       })
   }
 
   useEffect(hook,[])
-
 
   const addUser = (event) => {
     event.preventDefault()
@@ -30,7 +36,12 @@ const App = () => {
       return
     }
     if(persons.find(person => person.name === newName)){
-      return alert(`The name: ${newName} is already in the phonebook`)
+      window.confirm(`${person.name} is already added to phonebook, replace the old number with the new one?`)
+      phonebookServices
+        .update(person.number)
+        .then(newNumber => {
+          setPersons(persons.concat(number))
+        })
     }
 
   const nameObject = {
@@ -38,14 +49,73 @@ const App = () => {
       number: newPhoneNumber,
       id: String(persons.length + 1)
     }
-    setPersons(persons.concat(nameObject))
-    setNewName("")
-    setNewPhoneNumber("")
+    phonebookServices
+      .create(nameObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(nameObject))
+        setNewName("")
+        setNewPhoneNumber("")
+        setMessage(`Added ${newName}`)
+
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      })
   }
 
+  const Button = (props) => {
+    return (
+      <button 
+        id={props.id}
+        className="delete-button"
+        onClick={props.onClick}>
+        Delete
+      </button>
+    )
+  }
+
+  const handleDelete =({id, name}) => {
+    console.log(`La id es: `, id)
+    console.log(`El nombre es: `, name)
+
+    if(window.confirm(`Do you really want to delete ${name}"?`)){
+      phonebookServices
+        .del(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+  }
 
   const personsToShow = searchTerm === "" ? persons 
   : persons.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
+
+
+const AddNotificacion = ({message}) => {
+  if(message === null){
+    return null
+  }
+  return (
+    <div className="userAdded">
+      {message}
+    </div>
+  )
+}
+
+
+const Footer = () => {
+  const footerStyle = {
+    color: "darkblue",
+    fontStyle: "italic",
+    fontSize: 16
+  }
+  return (
+    <div style={footerStyle}>
+      <br/>
+      <em>Phonebook app, Department of Computer Science, University of Helsinki 2025</em>
+    </div>
+  )
+}
 
 
   return (
@@ -59,6 +129,7 @@ const App = () => {
         <input value={searchTerm} onChange={(e) => searchPerson(e, setSearchTerm)} />
       </div>
       <h2>Add new</h2>
+      <AddNotificacion message={message} />
       <form onSubmit={addUser}>
         <div>
           {/* Si la funcion se queda dentro de APP se haria como aqui */}
@@ -80,10 +151,12 @@ const App = () => {
         <ul>
           {personsToShow.map((person) => (
             <li key={person.id}>
-              <div>{person.name}:  {person.number}</div>
+              {person.name}: {person.number} &nbsp; <Button onClick={() => handleDelete(person)}/>
+              <br/>
             </li>
           ))}
         </ul>
+        <Footer />
     </div>
   )
 }

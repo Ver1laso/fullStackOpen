@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from "axios"
-import Note from './components/Note'
+import noteService from './services/noteService'
 
 
 
@@ -11,17 +11,49 @@ function App(props) {
   const [showAll, setShowAll] = useState(true)
 
 
-  const hook = () => {
-    console.log("effect ==>")
-    axios
-      .get("http://localhost:3001/notes")
-      .then(response => {
-        console.log("promise fulfilled")
-        setNotes(response.data)
+
+  const toggleImportanceOf = (id) => {
+    const url = `http://localhost:3001/notes/${id}`
+    const note = notes.find(nota => nota.id === id)
+    const changeNote = {...note, important: !note.important}
+    // axios
+    //   .put(url, changeNote)
+    noteService
+      .update(id, changeNote)
+      // .then(response => {
+      //   setNotes(notes.map(note => note.id !== id ? note: response.data))
+      .then(returnedNote => {
+        setNotes(notes.map(note => note.id !==id ? note : returnedNote))
       })
+      .catch(error => {
+        alert(
+          `the note '${note.content}' was already deleted from server`
+        )
+        setNotes(notes.filter(n => n.id !== id))
+      })
+      console.log(changeNote)
   }
 
+  const hook = () => {
+    // axios
+    //   .get("http://localhost:3001/notes")
+    noteService
+      .getAll()
+      // .then(response => {
+      //   setNotes(response.data)
+      .then(initialNotes => {
+        setNotes(initialNotes)
+      })
+  }
   useEffect(hook, [])
+
+  // useEffect(() => {
+  //   noteService
+  //     .getAll()
+  //     .then(response => {
+  //       setNotes(response.data)
+  //     })
+  // },[])
  
 
   const addNote = (event) => {
@@ -34,10 +66,18 @@ function App(props) {
     const noteObject = {
       content: newNote,
       important: Math.random() < 0.5,
-      id: String(notes.length + 1),
     }
-    setNotes(notes.concat(noteObject))
-    setNewNote('')
+    // axios
+    //   .post("http://localhost:3001/notes", noteObject)
+    noteService
+      .create(noteObject)
+      // .then(response => {
+      //   setNotes(notes.concat(response.data))
+      //   setNewNote("")
+      ,then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
+        setNewNote("")
+      })
   }
 
   const handleNoteChange = (event) => {
@@ -52,6 +92,17 @@ function App(props) {
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important === true) 
 
+  const Note = ({note, toggleImportance}) => {
+    const label = note.important ? "make not important" : "make important"
+
+    return (
+      <li>
+        {note.content}
+        <button onClick={toggleImportance}>{label}</button>
+      </li>
+    )
+  }
+
   return (
     <>
       <div>
@@ -63,7 +114,11 @@ function App(props) {
         </div>
         <ul>
           {notesToShow.map((note) => (
-            <Note key={note.id} note={note} />
+            <Note 
+              key={note.id} 
+              note={note} 
+              toggleImportance={() => toggleImportanceOf(note.id)}
+            />
           ))}
         </ul>
         <form onSubmit={addNote}>
@@ -73,45 +128,6 @@ function App(props) {
       </div>
     </>
   )
-
-  // return (
-  //   <>
-  //     <form action="/my=handling-form-page" method="post">
-  //       <ul>
-  //         <li>
-  //           <label for="name">Name: </label>
-  //           <input type="text" id="name" name="user_name" placeholder='blabla'/>
-  //         </li>
-  //         <li>
-  //           <label for="mail">Email: </label>
-  //           <input type="email" id="email" name="user_email" placeholder='blabla@gmail.com'/>
-  //         </li>
-  //         <li>
-  //           <label for="phone">Phone Numer: </label>
-  //           <input type="tel" id="phone" name="user_phoneNumber" pattern='[0-9]{9}' placeholder="123456789"/>
-  //         </li>
-  //         <li>
-  //           <label for="msg">Message: </label>
-  //           <textarea id="msg" name="user_message" rows="5" cols="40"></textarea>
-  //         </li>
-  //         <li>
-  //           <label for="url">Url</label>
-  //           <input type="url" id="url" name="url" />
-  //           <label for="search">Search</label>
-  //           <input type="search" id="search" name="search" />
-  //           <label for="date">Enteder date: </label>
-  //           <input type="date" name="date" id="date" />
-
-  //         </li>
-  //         <li class="button">
-  //           <button type="submit">Send the message!</button>
-  //         </li>
-  //       </ul>
-  //     </form>
-  //   </>
-  // )
-
-
 
 }
 
