@@ -9,7 +9,7 @@ const { nextTick } = require('process')
 const { json } = require('stream/consumers')
 app.use(express.json())
 const morgan = require('morgan')
-
+app.use(express.static('dist'))
 
 
 morgan.token('body', request => {
