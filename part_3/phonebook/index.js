@@ -1,4 +1,6 @@
 const express = require('express')
+const cors = require('cors')
+
 
 const app = express()
 
@@ -23,6 +25,8 @@ app.use(morgan(function(tokens, request, response){
         tokens.body(request, response)
     ].join(' ');
 }));
+
+app.use(cors())
 
 let persons = [
     { 
@@ -121,6 +125,12 @@ app.post('/api/persons', (request, response) => {
 
 
 
-const PORT = 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+// const PORT = 3001
+// app.listen(PORT)
+// console.log(`Server running on port ${PORT}`)
+
+// For online deploiment render
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+})

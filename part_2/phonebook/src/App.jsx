@@ -21,6 +21,7 @@ const App = () => {
       // .then(response => {
       //   console.log("Respuesta obtenida")
       //   setPersons(response.data)
+      console.log("Fetching persons from backend...");
       phonebookServices
       .getAll()
       .then(initialNames => {
