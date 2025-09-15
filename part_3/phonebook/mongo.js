@@ -6,13 +6,6 @@ const user = encodeURIComponent(process.env.MONGO_USER);
 const password = encodeURIComponent(process.env.MONGO_PASSWORD);
 const url = process.env.MONGO_URL
 
-// const password = process.argv[2]
-
-// const url = `mongodb+srv://jlprisan_db_user:${password}@cluster0.hwo6sj9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
-// const url = `mongodb+srv://jlprisan_db_user:${password}@cluster0.hwo6sj9.mongodb.net/phoneApp?retryWrites=true&w=majority&appName=Cluster0`
-// const url = `mongodb+srv://${user}:${password}@cluster0.hwo6sj9.mongodb.net/phoneApp?retryWrites=true&w=majority&appName=Cluster0`
-
-
 
 mongoose.set('strictQuery', false)
 

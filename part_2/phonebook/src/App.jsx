@@ -49,12 +49,12 @@ const App = () => {
   const nameObject = {
       name: newName,
       number: newPhoneNumber,
-      id: String(persons.length + 1)
+      // id: String(persons.length + 1)
     }
     phonebookServices
       .create(nameObject)
       .then(returnedPerson => {
-        setPersons(persons.concat(nameObject))
+        setPersons(persons.concat(returnedPerson))
         setNewName("")
         setNewPhoneNumber("")
         setMessage(`Added ${newName}`)
@@ -68,7 +68,6 @@ const App = () => {
   const Button = (props) => {
     return (
       <button 
-        id={props.id}
         className="delete-button"
         onClick={props.onClick}>
         Delete
