@@ -8,9 +8,9 @@ const { nextTick } = require('process')
 const { json } = require('stream/consumers')
 app.use(cors())
 
-const url = process.env.MONGO_URL
+const uri = process.env.MONGO_URI
 mongoose.set('strictQuery', false)
-mongoose.connect(url)
+mongoose.connect(uri)
     .then(() =>{
         console.log("Connected to the db...")
     })
