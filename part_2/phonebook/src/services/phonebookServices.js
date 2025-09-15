@@ -2,13 +2,17 @@ import axios from 'axios'
 
 // const baseUrl = `http://localhost:3001/persons`
 // const baseUrl = `http://localhost:3001/api/persons`
-const baseUrl = `/api/persons`
+// const baseUrl = `/api/persons`
+const baseUrl = import.meta.env.MODE === "development"
+  ? "http://localhost:3001/api/persons"
+  : "/api/persons";
 
 
 const getAll = () => {
     const request = axios.get(baseUrl)
     return request.then(response => response.data)
 }
+
 
 const create = (nameObject) => {
     const request = axios.post(baseUrl, nameObject)
@@ -21,7 +25,7 @@ const update = (id, nameObject) => {
 }
 
 const del = (id, nameObject) => {
-    const request = axios.delete(`${baseUrl}/${id}`, nameObject)
+    const request = axios.delete(`${baseUrl}/${id}`)
     return request.then(response => response.data)
 }
 

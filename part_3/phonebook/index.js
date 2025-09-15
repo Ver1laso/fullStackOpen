@@ -1,12 +1,25 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-
-
+const mongoose = require('mongoose')
 const app = express()
-
 const http = require("http")
 const { nextTick } = require('process')
 const { json } = require('stream/consumers')
+app.use(cors())
+
+const url = process.env.MONGO_URL
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+    .then(() =>{
+        console.log("Connected to the db...")
+    })
+    .catch((error) => {
+        console.log("Error connecting to the db: ", error.message)
+    })
+
+
+const Phone = require('./models/phone')
 app.use(express.json())
 const morgan = require('morgan')
 app.use(express.static('dist'))
@@ -28,28 +41,7 @@ app.use(morgan(function(tokens, request, response){
 
 app.use(cors())
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+
 
 const generateId = () => {
 
@@ -64,9 +56,23 @@ const numberOfEntries = () => {
     return persons.length
 }
 
-app.get('/api/persons', (request, response) => {
-    response.json(persons)
+
+
+app.get('/api/persons', async (request, response) => {
+    const search = request.query.search || "" // si no hay busqueda, lo devuelve todo
+
+    try {
+        const persons = await Phone.find({
+            name: {$regex: search, $options: "i"} //No afectan las mayusculas
+        })
+        // response.json(persons)//devuelve un array 
+        response.json(Array.isArray(persons) ? persons : [])
+    } catch (error) {
+        response.status(500).json({error: "Failed to find: ", search})
+    }
 })
+
+
 
 app.get('/info', (request, response) => {
     response.send(
@@ -87,47 +93,57 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter( person => person.id !== id)
 
-    response.status(204).send("usuario borrado")
+
+app.delete('/api/persons/:id', async (request, response) => {
+    const id = request.params.id
+
+    if(!id) {
+        return response.status(400).json({error: "User does not exists"})
+    }
+
+    try{
+        const result = await Phone.findByIdAndDelete(id)
+
+        if(result) {
+            console.log("User deleted: ", result.name)
+            return response.status(204).end()
+        } else {
+            return response.status(404).json({error: "User not found"})
+        }
+    } catch (error) {
+        console.error("Error deleting user: ", error)
+        return response.status(500).json({error: "Someting went wrong"})
+    }
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', async (request, response) => {
     const body = request.body
 
-    if(!body.name) {
-        return response.status(400).json({
-            error: "missing name"
+    if(!body.name || !body.number) {
+        return response.status(400).json({error: "Name or number missing"})
+    }
+
+    try {
+        const existing = await Phone.findOne({name: body.name})
+        if(existing) {
+            return response.status(400).json({error: "User already exists"})
+        }
+
+        const person = new Phone({
+            name: body.name,
+            number: body.number,
         })
+
+        const savedPhone = await person.save()
+        response.json(savedPhone)
+    } catch (error) {
+        console.error("Error saving person: ", error)
+        response.status(500).json({error: "Something went wrong"})
     }
-    if (persons.find(n => n.name === body.name)){
-        return response.status(400).json({
-            error: "User already exists"
-        })
-    }
-
-    console.log(body)
-
-
-
-    const person = {
-        id: generateId(),
-        name: body.name,
-        number: body.number
-    }
-
-    persons = persons.concat(person)
-
-    response.json(person)
 })
 
 
-
-// const PORT = 3001
-// app.listen(PORT)
-// console.log(`Server running on port ${PORT}`)
 
 // For online deploiment render
 const PORT = process.env.PORT || 3001

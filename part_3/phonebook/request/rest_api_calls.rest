@@ -5,13 +5,13 @@ GET http://localhost:3001/api/persons
 GET http://localhost:3001/info
 
 ###
-DELETE http://localhost:3001/api/persons/718
+DELETE http://localhost:3001/api/persons/68c2cb7df61b66874f470a6b
 
 ###
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
     { 
-      "name": "Alpargacio Bernadez", 
+      "name": "Bernardo Bernadez", 
       "number": "69-69-6423122"
     }

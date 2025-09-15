@@ -25,6 +25,7 @@ const App = () => {
       phonebookServices
       .getAll()
       .then(initialNames => {
+        console.log("Backend returned:", initialNames); 
         setPersons(initialNames)
       })
   }
@@ -90,6 +91,9 @@ const App = () => {
 
   const personsToShow = searchTerm === "" ? persons 
   : persons.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
+
+
+
 
 
 const AddNotificacion = ({message}) => {
