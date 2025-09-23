@@ -46,11 +46,17 @@ const App = () => {
         })
     }
 
-  const nameObject = {
+    const nameObject = {
       name: newName,
       number: newPhoneNumber,
       // id: String(persons.length + 1)
     }
+
+    if(nameObject.name.length <= 3) {
+      window.alert("Name needs to have 3 characters or more")
+      return
+    }
+
     phonebookServices
       .create(nameObject)
       .then(returnedPerson => {
