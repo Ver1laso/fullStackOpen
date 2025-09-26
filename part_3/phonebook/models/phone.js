@@ -22,4 +22,4 @@ phoneSchema.virtual('id').get(function() {
     return this._id.toHexString();
 })
 
-module.exports = mongoose.model("Phone", phoneSchema)
+module.exports = mongoose.model("Phone", phoneSchema, "testPhone")

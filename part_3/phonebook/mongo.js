@@ -4,7 +4,8 @@ const mongoose = require('mongoose')
 
 const user = encodeURIComponent(process.env.MONGO_USER);
 const password = encodeURIComponent(process.env.MONGO_PASSWORD);
-const url = process.env.MONGO_URL
+// const url = process.env.MONGO_URL
+const url = process.env.TEST_MONGO_URI
 
 
 mongoose.set('strictQuery', false)
@@ -27,11 +28,7 @@ const phoneSchema = new mongoose.Schema({
 const Phone = mongoose.model('Phone', phoneSchema)
 
 
-// Para salvar datos en mongo con mongoose
-// const phone = new Phone({
-//     name: "Alpargacio Fernandez",
-//     number: "23-00-234252"
-// })
+
 
 const main = async () => {
     await mongoose.connect(url)
