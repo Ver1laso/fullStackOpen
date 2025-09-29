@@ -22,7 +22,7 @@ beforeEach(async () => {
     await Phone.deleteMany({})
     console.log("Deleting data from DB...")
     await Phone.insertMany(initialPersons)
-    console.log("New data added to the DB...")
+    console.log("Inserting new data into the db for testing...")
 })
 
 test('Phones are returned as json', async () => {
