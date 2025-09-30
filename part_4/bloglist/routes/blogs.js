@@ -54,6 +54,20 @@ router.post('/', async (request, response) => {
     response.status(201).json(savedPost)
 })
 
+router.put('/:id', async(request, response) => {
+    
+    const post = await Blog.findById(request.params.id)
+
+
+    post.title = request.body.title
+    post.author = request.body.author
+    post.url = request.body.url
+    post.likes = request.body.likes
+
+    const savePost = await post.save()
+    response.status(200).json(savePost)
+})
+
 router.delete('/:id', async (request, response) => {
     const id = request.params.id
     console.log("Id of the deleted post: ", id)

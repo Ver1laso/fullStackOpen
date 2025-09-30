@@ -147,6 +147,31 @@ describe('addition of a new note', ()=> {
         assert(titles.includes('Canonical string reduction'))
     })
 
+    test('Succeed updating a blog post', async()=>{
+        const postAtStart = await helper.blogsInDb()
+        const postToUpdate = postAtStart[0]
+
+        const updatedData = {
+            title: "Updated Title",
+            author: postToUpdate.author,
+            url: postToUpdate.url,
+            likes: postToUpdate.likes +1
+        }
+
+        const response = await api
+            .put(`/api/blogs/${postToUpdate.id}`)
+            .send(updatedData)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        assert.strictEqual(response.body.likes, postToUpdate.likes + 1)
+
+        const postAtEnd = await helper.blogsInDb()
+        const updatedPost = postAtEnd.find(p => p.id === postToUpdate.id)
+
+        assert.strictEqual(updatedPost.likes, postToUpdate.likes + 1)
+        assert.strictEqual(updatedPost.title, "Updated Title")
+    })
 
     test('fails with status code 400 if data invalid', async ()=> {
         const newPost = {
