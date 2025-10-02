@@ -5,13 +5,17 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const Blog = require('./models/blog')
 const morgan = require('morgan')
-
+const usersRouter = require('./controllers/users')
+const User = require('./models/user')
 require('./mongo')
+
+
 
 
 
 app.use(cors())
 app.use(express.json())
+app.use('/api/users', usersRouter)
 
 morgan.token('body', request => {
     return JSON.stringify(request.body)
@@ -59,6 +63,13 @@ app.post('/api/blogs', async (request, response) => {
     }
 
     try{
+
+        const user = await User.findById(body.userId)
+
+        if(!user) {
+            return response.status(400).json({error: 'User not found'})
+        }
+
         const existing = await Blog.findOne({title: body.title})
         if(existing){
             return response.status(400).json({error: "Title already exists"})
@@ -68,11 +79,16 @@ app.post('/api/blogs', async (request, response) => {
             title: body.title,
             author: body.author,
             url: body.url,
-            likes: body.likes
+            likes: body.likes,
+            user: user._id
         })
 
         const savedPost = await post.save()
-        response.json(savedPost)
+
+        user.posts = user.posts.concat(savedPost._id)
+        await user.save()
+
+        response.status(201).json(savedPost)
     } catch (error) {
         console.error("Error saving post: ", error)
         response.status(500).json({error: "Something went wrong saving post"})
@@ -101,6 +117,9 @@ app.delete('/api/blogs/:id', async (request, response) => {
         return response.status(500).json({error: "Something went wrong"})
     }
 })
+
+
+
 
 
 app.use(express.static('dist'))

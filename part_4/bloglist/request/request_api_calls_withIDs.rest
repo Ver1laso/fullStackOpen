@@ -1,0 +1,95 @@
+
+### CREAR USUARIOS
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "MichaelChan",
+  "name": "Michael Chan",
+  "password": "cocoloco"
+}
+###
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "RobMart",
+  "name": "Robert C. Martin",
+  "password": "cocoloco"
+}
+###
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "EdWDijk",
+  "name": "Edsger W. Dijkstra",
+  "password": "cocoloco"
+}
+
+### CREAR POSTS CON USER ID
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "React patterns",
+  "author": "Michael Chan",
+  "url": "https://reactpatterns.com/",
+  "likes": 7,
+  "userId": "68de645ed2b8df7953fdb1c9"
+}
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Go To Statement Considered Harmful",
+  "author": "Edsger W. Dijkstra",
+  "url": "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+  "likes": 5,
+  "userId": "68de6461d2b8df7953fdb1cf"
+}
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Canonical string reduction",
+  "author": "Edsger W. Dijkstra",
+  "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+  "likes": 12,
+  "userId": "68de6461d2b8df7953fdb1cf"
+}
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "First class tests",
+  "author": "Robert C. Martin",
+  "url": "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+  "likes": 10,
+  "userId": "68de6460d2b8df7953fdb1cc"
+}
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "TDD harms architecture",
+  "author": "Robert C. Martin",
+  "url": "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+  "likes": 0,
+  "userId": "68de6460d2b8df7953fdb1cc"
+}
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Type wars",
+  "author": "Robert C. Martin",
+  "url": "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+  "likes": 2,
+  "userId": "68de6460d2b8df7953fdb1cc"
+}

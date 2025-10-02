@@ -1,6 +1,7 @@
 const express = require('express')
 const Blog = require('../models/blog')
 const { response } = require('../app')
+const User = require('../models/user')
 
 const router = express.Router()
 
@@ -39,6 +40,13 @@ router.post('/', async (request, response) => {
         return response.status(400).json({error: "Title or Author missing"})
     }
 
+    const user = await User.findById(body.userId)
+
+    if(!user) {
+        return response.status(400).json({error: 'User not found'})
+    }
+    
+
     const existing = await Blog.findOne({title: body.title})
     if(existing) {
         return response.status(400).json({error: "Title already exists"})
@@ -47,10 +55,14 @@ router.post('/', async (request, response) => {
         title: body.title,
         author: body.author,
         url: body.url,
-        likes: body.likes
+        likes: body.likes,
+        user: user._id
     })
 
     const savedPost = await post.save()
+    user.posts = user.posts.concat(savedPost._id)
+    await user.save()
+    
     response.status(201).json(savedPost)
 })
 
