@@ -1,30 +1,28 @@
-require('dotenv').config()
-require('express-async-errors')
+// require('dotenv').config()
+// require('express-async-errors')
+// const express = require('express')
+// const cors = require('cors')
+// const morgan = require('morgan')
+// const blogRouter = require('./routes/blogs')
+// const usersRouter = require('./controllers/users')
+// const loginRouter = require('./controllers/login')
+// const mongoose = require('mongoose')
+// const app = express()
 
 const express = require('express')
+const app = express()
 const cors = require('cors')
+const mongoose = require('mongoose')
 const morgan = require('morgan')
 
-const blogRouter = require('./routes/blogs')
+const blogRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
-
-
-const mongoose = require('mongoose')
-// const Blog = require('./models/blog')
-// const { response } = require('../../part_3/phonebook/app')
-
-
-const app = express()
+const loginRouter = require('./controllers/login')
 
 //Middleware
 app.use(cors())
 app.use(express.json())
 app.use(express.static('dist'))
-
-
-
-
-
 
 
 //Morgan config for logging
@@ -57,13 +55,19 @@ app.use((error, request, response, next) => {
         return response.status(400).json({error: error.message})
     } else if(error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
         return response.status(400).json({ error: 'expected `username` to be unique'})
+    } else if(error.name === 'JsonWebTokenError') {
+        return response.status(401).json({error: 'token invalid'})
+    } else if(error.name === 'TokenExpiredError') {
+        return response.status(401).json({error: 'token expired'})
     }
 
     response.status(500).json({error: 'something went wrong'})
 })
 
-app.use('/api/blogs', blogRouter)
+app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/blogs', blogRouter)
+
 
 // app export
 module.exports = app
