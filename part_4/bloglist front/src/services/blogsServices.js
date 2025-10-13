@@ -27,4 +27,25 @@ const update = (id, newObject) => {
   return request.then(response => response.data)
 }
 
-export default { getAll, create, update, setToken }
+const deletePost = (id) => {
+  const request = axios.delete(`${baseUrl}/${id}`)
+  return request.then(response => response.data)
+}
+
+const addLikes = (id, updatePost) => {
+  const request = axios.put(`${baseUrl}/${id}`, updatePost)
+  return request.then(response => response.data)
+}
+
+const blogsServices = {
+  getAll,
+  create,
+  update,
+  setToken,
+  deletePost,
+  addLikes
+}
+
+export default blogsServices
+
+// export default { getAll, create, update, setToken, deletePost, addLikes }
