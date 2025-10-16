@@ -6,7 +6,7 @@ const Blog = ({ blog }) => (
   </div>  
 )
 
-Blog.PropTypes = {
+Blog.propTypes = {
   blog: PropTypes.shape({
     title: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,

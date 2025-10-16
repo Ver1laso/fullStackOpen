@@ -123,10 +123,10 @@ const App = () => {
         <>
           <form onSubmit={addPost}>
             <div>
-              Title: <input type='text' value={title} onChange={({target})=> setNewTitle(target.value)} />
+              Title: <input data-testid='title' type='text' value={title} onChange={({target})=> setNewTitle(target.value)} />
             </div>
             <div>
-              url:&nbsp; <input type='text' value={url} onChange={({target}) => setUrl(target.value)}/>
+              url:&nbsp; <input data-testid='url' type='text' value={url} onChange={({target}) => setUrl(target.value)}/>
             </div>
             <button type='submit'>save</button>
           </form>
@@ -156,7 +156,7 @@ const App = () => {
       <h1>Posts</h1>
 
       <Notification message={errorMessage} />
-
+      
       {user === null ? (
       <LoginForm
       handleLogin={handleLogin}
@@ -202,7 +202,11 @@ const App = () => {
             </ul>
         </div>
       }
+    <footer style={{ marginTop: '40px', textAlign: 'left', color: 'blue' }}>
+      <p>Blog app, Department of Computer Science, University of Helsinki 2025</p>
+    </footer>
     </div>
+    
   )
 }
 
